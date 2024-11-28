@@ -39,17 +39,27 @@ I have implemented it using Python Jupyter notebook and C++
 
 ## Installation
 
+#### C++ implementation
+
 ```bash
 # Clone the repository
 git clone https://github.com/amalazimroshan/controlnode.git
 cd controlnode
+```
 
+```bash
 mkdir build
 cd build
 cmake ..
 make
+```
+
+#### Python implementation
+
+```bash
 # Install Python dependencies
 pip install osmnx networkx matplotlib
+
 ```
 
 ## Usage
@@ -65,3 +75,7 @@ pip install osmnx networkx matplotlib
 ## Contributors
 
 [List contributors] -->
+
+```
+
+```
