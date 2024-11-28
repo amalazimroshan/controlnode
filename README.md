@@ -62,11 +62,11 @@ pip install osmnx networkx matplotlib
 
 ```
 
-## Usage
+<!-- ## Usage
 
 1. Configure API credentials
 2. Run C++ executable to fetch intersection data
-3. Use Jupyter notebook for visualization and analysis
+3. Use Jupyter notebook for visualization and analysis -->
 
 <!-- ## License
 
@@ -75,7 +75,3 @@ pip install osmnx networkx matplotlib
 ## Contributors
 
 [List contributors] -->
-
-```
-
-```
