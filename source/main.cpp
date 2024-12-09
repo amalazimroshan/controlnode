@@ -30,6 +30,7 @@ int main() {
       "out%20geom;";
   std::string response = fetch_overpass_data(overpassUrl);
   std::vector<Roadway> ways = extract_roadways(response);
-
+  std::string roadways_json = serialize_roadways_tojson(ways);
+  std::cout << roadways_json << std::endl;
   return 0;
 }

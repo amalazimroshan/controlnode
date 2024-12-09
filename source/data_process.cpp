@@ -78,3 +78,23 @@ std::vector<Roadway> extract_roadways(const std::string& raw_response) {
   }
   return ways;
 }
+
+std::string serialize_roadways_tojson(const std::vector<Roadway>& ways) {
+  json ways_json = json::array();
+
+  for (const auto& way : ways) {
+    json way_json{{"bearing", way.bearing},
+                  {"points", json::array()},
+                  {"time", "30"},
+                  {"closed", json::boolean_t(0)}};
+
+    for (const auto& point : way.points) {
+      way_json["points"].push_back({
+          {"lat", point.lat},
+          {"lon", point.lon},
+      });
+    }
+    ways_json.push_back(way_json);
+  }
+  return ways_json.dump();
+}
