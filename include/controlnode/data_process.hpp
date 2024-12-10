@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <nlohmann/json.hpp>
 
@@ -11,6 +12,9 @@ struct Roadway {
   std::vector<GeoPoint> points;
   double bearing;
 };
+
+extern std::vector<Roadway> ways;
+
 double get_bearing(const GeoPoint& point1, const GeoPoint& point2);
-std::vector<Roadway> extract_roadways(const std::string& data);
+void extract_roadways(const std::string& data);
 std::string serialize_roadways_tojson(const std::vector<Roadway>& ways);
