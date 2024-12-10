@@ -21,13 +21,63 @@
 <body>
     <div id="map"></div>
     <script async defer>
-        let lat = 40.744106
-        let lon = -73.995623
-        const map = L.map('map').setView([lat, lon], 16)
-        L.tileLayer('https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png', {
-	    maxZoom: 19,
-	    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.openstreetmap.cat" target="_blank">Breton OpenStreetMap Team</a>'
-}).addTo(map)
+        // let lat = 40.744106
+        // let lon = -73.995623
+        async function fetch_way_json(){
+            let response = await fetch("http://localhost:8080/ways")
+            let data = await response.json()
+            return data;
+        }
+        async function render_map(){
+
+            const ways = await fetch_way_json()
+            let lat = ways[0].points[0].lat
+            let lon = ways[0].points[0].lon 
+
+            const map = L.map('map').setView([lat, lon], 16)
+
+            L.tileLayer('https://tile.openstreetmap.bzh/ca/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.openstreetmap.cat" target="_blank">Breton OpenStreetMap Team</a>'
+        }).addTo(map)
+
+        L.marker([lat,lon],{
+            icon:L.divIcon({
+                className: 'intersection-marker',
+                    html: `<div style="background-color: red; width: 10px; height: 10px; border-radius: 50%;"></div>`
+                })
+            }).addTo(map);
+
+        ways.forEach(way => {
+            console.log(way);
+            
+            const coordinates = way.points.map(point=> [point.lat, point.lon])
+            console.log(coordinates);
+            
+            const polyline = L.polyline(coordinates, {
+                        color: '#FF0000',
+                        weight: 5,
+                        opacity: 0.7
+                    }).addTo(map);
+
+                    polyline.on('click', (e) => {
+                        const popup = L.popup()
+                            .setLatLng(e.latlng)
+                            .setContent(`
+                                <div>
+                                    <strong>Road Details</strong><br>
+                                    Bearing: ${way.bearing.toFixed(2)}°<br>
+                                    Closed:${way.closed}
+                                    Time:${way.time}
+                                    </div>
+                                    `)
+                            .openOn(map);
+                    });
+
+        });
+    }
+    render_map()
+
 
 
     </script>

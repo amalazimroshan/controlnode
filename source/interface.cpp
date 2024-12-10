@@ -44,7 +44,6 @@ void handle_request(tcp::socket& socket) {
 
   if (req.method() == http::verb::get) {
     std::string target = req.target();
-    std::cout << target << std::endl;
     if (target == "/") {
       std::string html_content = read_file("../index.html");
       res.set(http::field::content_type, "text/html");
