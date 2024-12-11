@@ -3,14 +3,20 @@
 #include <controlnode/interface.hpp>
 #include <iostream>
 
-int main() {
+int main(int argc, char* argv[]) {
   double lat = 8.523488;
   double lon = 76.945289;
+  if (argc >= 3) {  // expect 2 arguments after the program name
+    lat = std::atof(argv[1]);
+    lon = std::atof(argv[2]);
+  }
+  std::cout << "Latitude: " << lat << std::endl;
+  std::cout << "Longitude: " << lon << std::endl;
+
   const int port = 8080;
   asio::io_context ioc;
   tcp::acceptor acceptor(ioc, tcp::endpoint(tcp::v4(), port));
-  // double lat = 8.519897;
-  // double lon = 76.945056;
+
   std::string overpass_url =
       "https://overpass-api.de/api/"
       "interpreter?data=[out:json];(node(around:10," +
@@ -20,6 +26,7 @@ int main() {
       "trunk|primary|secondary|"
       "tertiary|unclassified|residential|service|living_street)$\"];"
       "out%20geom;";
+
   std::string response = fetch_overpass_data(overpass_url);
   extract_roadways(response);
   // std::string roadways_json = serialize_roadways_tojson(ways);
@@ -27,6 +34,7 @@ int main() {
   while (true) {
     tcp::socket socket(ioc);
     acceptor.accept(socket);
+    std::cout << "server listening on http://localhost:8080/" << std::endl;
     try {
       handle_request(socket);
     } catch (const std::exception& e) {
