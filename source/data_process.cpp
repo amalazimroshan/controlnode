@@ -87,6 +87,11 @@ void extract_roadways(const std::string& raw_response) {
       }
     }
   }
+  for (int i = 0; i < ways.size(); i++) {
+    ways[i].id = i;
+    ways[i].time = 30;
+    ways[i].closed = false;
+  }
   // return ways;
 }
 
@@ -94,10 +99,11 @@ std::string serialize_roadways_tojson(const std::vector<Roadway>& ways) {
   json ways_json = json::array();
 
   for (const auto& way : ways) {
-    json way_json{{"bearing", way.bearing},
+    json way_json{{"id", way.id},
+                  {"bearing", way.bearing},
                   {"points", json::array()},
-                  {"time", "30"},
-                  {"closed", json::boolean_t(0)}};
+                  {"time", way.time},
+                  {"closed", way.closed}};
 
     for (const auto& point : way.points) {
       way_json["points"].push_back({

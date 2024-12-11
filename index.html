@@ -12,17 +12,99 @@
             margin:0;
             padding: 0;
         }
+        h3{
+            font-weight: 400;
+        }
+        body{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
         #map{
             height: 100vh;
             width: 100vw;
         }
+        button{
+            padding:0.4rem;
+            margin:0.3em;
+            background-color: aliceblue;
+            border: 1px solid ;
+            border-radius: 4px;
+        }
+        button:hover{
+            cursor: pointer;
+        }
+        input[type=text]{
+            width: 100%;
+        }
+        dialog{
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            position: absolute;
+            border:none;
+            border-radius: 7px;
+            padding: 1rem;
+        }
+        p{
+            margin-block:0.5rem;
+        }
+
     </style>
 </head>
 <body>
     <div id="map"></div>
+    <dialog id="dialog">
+        <h3>Road details</h3>
+        <form id="map-details" method="post" enctype="application/x-www-form-urlencoded">
+          <p><label>id: </label><input type="text" id="id" name="id" readonly></p>
+          <p><label for="bearing">bearing: </label><input type="text" name="bearing" id="bearing"/></p>
+          <p><label for="time">time: </label><input type="text" name="time" id="time"> </p>
+          <p><label for="closed">closed: <input type="checkbox" name="closed" id="closed"></label></p>
+          <div>
+            <button value="cancel" formmethod="dialog">Cancel</button>
+            <button id="confirmBtn" value="default">Confirm</button>
+          </div>
+        </form>
+      </dialog>
+      
     <script async defer>
-        // let lat = 40.744106
-        // let lon = -73.995623
+        
+        const dialog = document.getElementById("dialog")
+        const confirmBtn = dialog.querySelector("#confirmBtn")
+
+        const form = document.querySelector('#map-details')
+        const idElem = form.querySelector("#id")
+        const bearingElem = form.querySelector("#bearing")
+        const timeElem = form.querySelector("#time")
+        const closedElem = form.querySelector("#closed")
+         
+        
+        dialog.addEventListener("close",(e)=>{
+
+        })
+        confirmBtn.addEventListener("click",(e)=>{
+            e.preventDefault()
+            const formData = new URLSearchParams(new FormData(form)).toString();
+            
+            fetch(form.action, {
+                method:'POST',
+                headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+                body:formData
+            })
+            .then(response => response.text())
+            .then(data=>{
+                console.log("sucess:", data);
+                location.reload()
+            })
+            .catch(error=>{
+                console.error("error: ",error);
+                
+            })
+        })
+
         async function fetch_way_json(){
             let response = await fetch("http://localhost:8080/ways")
             let data = await response.json()
@@ -48,12 +130,8 @@
                 })
             }).addTo(map);
 
-        ways.forEach(way => {
-            console.log(way);
-            
-            const coordinates = way.points.map(point=> [point.lat, point.lon])
-            console.log(coordinates);
-            
+        ways.forEach((way) => {
+            const coordinates = way.points.map(point=> [point.lat, point.lon])            
             const polyline = L.polyline(coordinates, {
                         color: '#FF0000',
                         weight: 5,
@@ -61,25 +139,28 @@
                     }).addTo(map);
 
                     polyline.on('click', (e) => {
-                        const popup = L.popup()
-                            .setLatLng(e.latlng)
-                            .setContent(`
-                                <div>
-                                    <strong>Road Details</strong><br>
-                                    Bearing: ${way.bearing.toFixed(2)}°<br>
-                                    Closed:${way.closed}
-                                    Time:${way.time}
-                                    </div>
-                                    `)
-                            .openOn(map);
-                    });
+                        idElem.value = way.id;
+                        bearingElem.value = way.bearing;
+                        timeElem.value = way.time;
+                        closedElem.checked = way.closed
+                        
+                        dialog.showModal()
+                        // const popup = L.popup()
+                            // .setLatLng(e.latlng)
 
+                            // .setContent(`
+                            //     <div>
+                            //         <strong>Road Details</strong><br>
+                            //         Bearing: ${way.bearing.toFixed(2)}°<br>
+                            //         Closed:${way.closed}
+                            //         Time:${way.time}
+                            //         </div>
+                            //         `)
+                            // .openOn(map);
+                    });
         });
     }
     render_map()
-
-
-
     </script>
 </body>
 </html>

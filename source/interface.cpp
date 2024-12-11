@@ -36,6 +36,22 @@ std::string read_file(const std::string& file_path) {
   return buffer.str();
 }
 
+std::unordered_map<std::string, std::string> parse_from_urlencoded(
+    const std::string& body) {
+  std::unordered_map<std::string, std::string> params;
+  std::istringstream iss(body);
+  std::string param;
+
+  while (std::getline(iss, param, '&')) {
+    size_t pos = param.find('=');
+    if (pos != std::string::npos) {
+      std::string key = param.substr(0, pos);
+      std::string value = param.substr(pos + 1);
+      params[key] = value;
+    }
+  }
+  return params;
+}
 void handle_request(tcp::socket& socket) {
   boost::beast::flat_buffer buffer;
   http::request<http::string_body> req;
@@ -55,6 +71,39 @@ void handle_request(tcp::socket& socket) {
       res.body() = roadways_json;
       res.prepare_payload();
     }
+  } else if (req.method() == http::verb::post) {
+    std::string body = req.body();
+
+    try {
+      auto params = parse_from_urlencoded(body);
+      if (params.find("id") == params.end()) {
+        throw std::runtime_error("No ID found");
+      }
+
+      int id = std::stoi(params["id"]);
+      auto it = std::find_if(ways.begin(), ways.end(),
+                             [id](const Roadway& way) { return way.id == id; });
+
+      if (it != ways.end()) {
+        if (params.find("bearing") != params.end()) {
+          it->bearing = std::stod(params["bearing"]);
+        }
+        if (params.find("time") != params.end()) {
+          it->time = std::stoi(params["time"]);
+        }
+        it->closed = (params.find("closed") != params.end());
+
+        res.body() = "Roadway updated successfully";
+      } else {
+        res.result(http::status::not_found);
+        res.body() = "Roadway not found";
+      }
+    } catch (std::exception& e) {
+      res.result(http::status::bad_request);
+      res.body() = std::string("Error: ") + e.what();
+      std::cerr << "form parameter error " << e.what() << std::endl;
+    }
+    res.prepare_payload();
   }
   http::write(socket, res);
 }

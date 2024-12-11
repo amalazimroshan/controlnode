@@ -9,8 +9,11 @@ struct GeoPoint {
   double lon;
 };
 struct Roadway {
+  int id;
   std::vector<GeoPoint> points;
   double bearing;
+  int time;
+  bool closed;
 };
 
 extern std::vector<Roadway> ways;
