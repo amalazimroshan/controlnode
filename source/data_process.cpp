@@ -7,14 +7,11 @@ double get_bearing(const GeoPoint& point1, const GeoPoint& point2) {
   double lon1 = point1.lon * M_PI / 180;
   double lat2 = point2.lat * M_PI / 180;
   double lon2 = point2.lon * M_PI / 180;
-  double dLon = lon2 - lon1;
 
-  double y = sin(dLon) * cos(lat2);
-  double x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
-
-  double bearing_rad = atan2(y, x);
-  double bearing_deg = fmod(bearing_rad * 180.0 / M_PI + 360, 360.0);
-  return bearing_deg;
+  double dy = lat2 - lat1;
+  double dx = lon2 - lon1;
+  double bearing = std::atan2(dy, dx) * 180.0 / M_PI;
+  return fmod(bearing + 360.0, 360.0);
 }
 void extract_roadways(const std::string& raw_response) {
   json data = json::parse(raw_response);

@@ -32,9 +32,9 @@ int main(int argc, char* argv[]) {
   // std::string roadways_json = serialize_roadways_tojson(ways);
   // std::cout << roadways_json << std::endl;
   while (true) {
+    std::cout << "server listening on http://localhost:8080/" << std::endl;
     tcp::socket socket(ioc);
     acceptor.accept(socket);
-    std::cout << "server listening on http://localhost:8080/" << std::endl;
     try {
       handle_request(socket);
     } catch (const std::exception& e) {
