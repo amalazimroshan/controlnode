@@ -1,77 +1,49 @@
 # ControlNode
 
-## Overview
+A geospatial traffic management system that uses OpenStreetMap data to analyze intersections and control traffic signals. Features a web interface for real-time configuration.
 
-ControlNode is a geospatial routing project that uses OpenStreetMap data to analyze road intersections and calculate road directions.
+## Quick Start
 
-## Implementations
-
-I have implemented it using Python Jupyter notebook and C++
-
-- **C++ Project**: Fetches road intersection data from Overpass API and calculates road directions
-- **Python Jupyter Notebook**: Uses OSMnx library to retrieve road intersection bearings
-
-## Python Notebook
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/amalazimroshan/controlnode/blob/main/get_bearings_from_nearest_node_osmnx.ipynb)
-
-### Features
-
-- Retrieves road intersection data using OSMnx
-- Calculates bearings of roads at a given intersection
-- Visualizes road network and intersection details
-
-## C++ Project
-
-### Functionality
-
-- Interacts with Overpass API
-- Processes road intersection geographical data
-- Computes road directions and bearings
-
-## Prerequisites
-
-- C++ Compiler
-- Python 3.x
-- OSMnx Library
-- Overpass API access
+### Prerequisites
+- C++ Compiler & CMake
 - libcurl
+- Python 3.x (for Python implementation)
+- Web browser
 
-## Installation
-
-#### C++ implementation
+### Installation
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/amalazimroshan/controlnode.git
 cd controlnode
-```
 
-```bash
-mkdir build
-cd build
+# Build C++ implementation
+mkdir build && cd build
 cmake ..
 make
-```
 
-#### Python implementation
-
-```bash
-# Install Python dependencies
+# Install Python dependencies (if using Python implementation)
 pip install osmnx networkx matplotlib
-
 ```
 
-<!-- ## Usage
+### Running the System
 
-1. Configure API credentials
-2. Run C++ executable to fetch intersection data
-3. Use Jupyter notebook for visualization and analysis -->
+#### C++ Version
+1. Start the server:
+```bash
+./controlnode [latitude] [longitude]  # Coordinates optional
+```
 
-<!-- ## License
+2. Access web interface:
+- Open `http://localhost:8080`
+- Configure traffic signals, timing, and road conditions
 
-[Specify your license]
+#### Python Version
+- Open Jupyter notebook in [Google Colab](https://colab.research.google.com/github/amalazimroshan/controlnode/blob/main/get_bearings_from_nearest_node_osmnx.ipynb)
+- Or run locally using Jupyter
 
-## Contributors
-
-[List contributors] -->
+## Features
+- Real-time traffic signal management
+- OpenStreetMap data integration
+- Web-based configuration interface
+- Support for both Python and C++ implementations
